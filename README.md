@@ -1,4 +1,4 @@
-# AntiGravity — Gold (XAUUSD) Intraday Trading Signal Bot
+# Alpha — Gold (XAUUSD) Intraday Trading Signal Bot
 
 > **Signal-only bot. No automated trade execution.**  
 > All trade ideas are validated, scored, and delivered to a Telegram channel or group.
