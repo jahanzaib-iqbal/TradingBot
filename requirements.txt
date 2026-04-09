@@ -1,0 +1,100 @@
+# =============================================================================
+# AntiGravity Gold Trading Bot — Python Dependencies
+# =============================================================================
+# Minimum Python version: 3.11
+# Install with: pip install -r requirements.txt
+# =============================================================================
+
+
+# ── MetaTrader 5 Integration ──────────────────────────────────────────────────
+# Windows-only bridge to the MetaTrader 5 terminal.
+# Used for OHLCV data retrieval, account info, and tick data.
+MetaTrader5>=5.0.45
+
+
+# ── Core Data Science ─────────────────────────────────────────────────────────
+# pandas: primary data structure (DataFrames) for OHLCV bars, signal logs, etc.
+pandas>=2.2.0
+# numpy: numerical operations (ATR, slope calculations, array manipulation)
+numpy>=1.26.0
+
+
+# ── Technical Indicators ──────────────────────────────────────────────────────
+# pandas-ta: comprehensive TA library built on top of pandas.
+#   Used for: ATR, ADX, EMA, RSI, Bollinger Bands, etc.
+pandas-ta>=0.3.14b
+
+# ta-lib (optional, high-performance C extension — requires manual install):
+#   pip install TA-Lib  (or use pre-built wheel from https://github.com/cgohlke/talib-build)
+# TA-Lib>=0.4.28
+
+# scipy: statistical utilities (linear regression for slope, z-score normalisation)
+scipy>=1.13.0
+
+
+# ── HTTP / Async Networking ───────────────────────────────────────────────────
+# requests: synchronous HTTP calls (economic calendar API, health checks)
+requests>=2.31.0
+# aiohttp: async HTTP session (news feed polling without blocking the event loop)
+aiohttp>=3.9.0
+
+
+# ── Telegram Notification ─────────────────────────────────────────────────────
+# python-telegram-bot v20+ uses a fully async API (asyncio-native).
+# PTB extras[job-queue] includes APScheduler integration for scheduled messages.
+python-telegram-bot[job-queue]>=20.7
+
+
+# ── Job Scheduling ────────────────────────────────────────────────────────────
+# APScheduler: cron / interval-based job scheduler.
+#   Used for: periodic bar-close analysis, daily summary, session open alerts.
+APScheduler>=3.10.4
+
+
+# ── Machine Learning (future enhancements) ────────────────────────────────────
+# scikit-learn: classical ML models for signal quality scoring,
+#   regime classification, and feature importance analysis.
+scikit-learn>=1.4.0
+
+# joblib: model serialisation / deserialisation (save & load trained models)
+joblib>=1.3.0
+
+
+# ── Environment & Configuration ───────────────────────────────────────────────
+# python-dotenv: loads environment variables from a .env file at startup
+python-dotenv>=1.0.0
+
+# pydantic / pydantic-settings: strongly-typed settings with automatic
+#   env-var loading, validation, and type coercion (alternative to dataclasses)
+pydantic>=2.7.0
+pydantic-settings>=2.3.0
+
+
+# ── Time & Timezone ───────────────────────────────────────────────────────────
+# pytz: IANA timezone database for session window calculations
+pytz>=2024.1
+
+
+# ── Logging & Monitoring ──────────────────────────────────────────────────────
+# rich: beautiful terminal output for the console handler
+rich>=13.7.0
+
+
+# ── Data Persistence ─────────────────────────────────────────────────────────
+# sqlitedict: lightweight persistent key-value store (signal history cache)
+sqlitedict>=2.1.0
+
+
+# ── Development & Code Quality ────────────────────────────────────────────────
+# pytest: test runner
+pytest>=8.1.0
+# pytest-asyncio: async test support (for Telegram notifier tests)
+pytest-asyncio>=0.23.0
+# black: opinionated code formatter
+black>=24.0.0
+# isort: import sorter
+isort>=5.13.0
+# flake8: style linter
+flake8>=7.0.0
+# mypy: optional static type checker
+mypy>=1.10.0

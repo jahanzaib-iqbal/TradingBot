@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backtest Report — XAUUSD H1</title>
+  <style>
+    :root {
+      --bg:       #0f1117;
+      --surface:  #1a1d27;
+      --border:   #2d3346;
+      --text:     #e0e6f0;
+      --muted:    #8b9ab0;
+      --gold:     #ffd700;
+      --green:    #00d68f;
+      --red:      #ff4757;
+      --blue:     #4a90d9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Inter', sans-serif;
+      background: var(--bg); color: var(--text);
+      padding: 24px; max-width: 960px; margin: 0 auto;
+    }
+    h1 { color: var(--gold); font-size: 1.5rem; margin-bottom: 4px; }
+    h2 { color: var(--blue); font-size: 1.1rem; margin: 24px 0 10px; }
+    .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; }
+    .grade-badge {
+      display: inline-block;
+      padding: 6px 20px;
+      border-radius: 6px;
+      background: #00d68f22;
+      border: 1px solid #00d68f;
+      color: #00d68f;
+      font-size: 1.6rem;
+      font-weight: bold;
+      float: right;
+      margin-top: -8px;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 18px;
+    }
+    .metric-label { color: var(--muted); font-size: 0.78rem; margin-bottom: 4px; }
+    .metric-value { font-size: 1.4rem; font-weight: 700; }
+    .metric-sub { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
+    .green { color: var(--green); }
+    .red   { color: var(--red);   }
+    .gold  { color: var(--gold);  }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border-radius: 8px;
+      overflow: hidden;
+      font-size: 0.88rem;
+    }
+    th, td {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+      text-align: right;
+    }
+    th { background: #232738; color: var(--muted); font-weight: 600; }
+    tr:last-child td { border-bottom: none; }
+    td:first-child, th:first-child { text-align: left; }
+    .footer { color: var(--muted); font-size: 0.75rem; margin-top: 32px; }
+  </style>
+</head>
+<body>
+  <h1>📊 Backtest Report
+    <span class="grade-badge">A+</span>
+  </h1>
+  <div class="subtitle">
+    XAUUSD H1 &nbsp;|&nbsp;
+    2024-01-01 → 2024-06-30 &nbsp;|&nbsp;
+    6 trading days &nbsp;|&nbsp;
+    Exceptional — production ready
+  </div>
+
+  <img src="equity_curve.png" alt="Equity Curve" style="width:100%;border-radius:8px;margin-top:16px;"/>
+
+  <h2>Performance Metrics</h2>
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-label">Win Rate</div>
+      <div class="metric-value green">62.0%</div>
+      <div class="metric-sub">31W / 19L / 0BE</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Profit Factor</div>
+      <div class="metric-value green">4.41</div>
+      <div class="metric-sub">Gross profit / gross loss</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Expectancy</div>
+      <div class="metric-value green">+1.296 R</div>
+      <div class="metric-sub">Average R per trade</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Total R</div>
+      <div class="metric-value green">+64.80 R</div>
+      <div class="metric-sub">50 resolved trades</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Sharpe Ratio</div>
+      <div class="metric-value green">10.98</div>
+      <div class="metric-sub">Annualised (daily R basis)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Max Drawdown</div>
+      <div class="metric-value gold">-4.00 R</div>
+      <div class="metric-sub">-34.9% of peak equity</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Calmar Ratio</div>
+      <div class="metric-value gold">16.20</div>
+      <div class="metric-sub">Net R / |Max Drawdown|</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Signals / Day</div>
+      <div class="metric-value">8.33</div>
+      <div class="metric-sub">Avg signals per trading day</div>
+    </div>
+  </div>
+
+  <h2>R-Multiple Statistics</h2>
+  <table>
+    <thead><tr>
+      <th>Metric</th><th>Value</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>Average Winner</td><td class="green">+2.703 R</td></tr>
+      <tr><td>Average Loser</td><td class="red">-1.000 R</td></tr>
+      <tr><td>Largest Winner</td><td class="green">+3.200 R</td></tr>
+      <tr><td>Largest Loser</td><td class="red">-1.000 R</td></tr>
+      <tr><td>Max Consecutive Wins</td><td>7</td></tr>
+      <tr><td>Max Consecutive Losses</td><td>4</td></tr>
+    </tbody>
+  </table>
+
+  
+            <h2>Monthly Breakdown</h2>
+            <table>
+              <thead><tr>
+                <th>Month</th><th>Trades</th>
+                <th>Win Rate</th><th>Total R</th>
+              </tr></thead>
+              <tbody><tr><td>2024-01</td><td>10</td><td style='color:#00d68f'>60%</td><td style='color:#00d68f'>+13.80 R</td></tr><tr><td>2024-02</td><td>10</td><td style='color:#00d68f'>80%</td><td style='color:#00d68f'>+19.40 R</td></tr><tr><td>2024-03</td><td>10</td><td style='color:#00d68f'>50%</td><td style='color:#00d68f'>+8.20 R</td></tr><tr><td>2024-04</td><td>10</td><td style='color:#ffd700'>40%</td><td style='color:#00d68f'>+1.20 R</td></tr><tr><td>2024-05</td><td>10</td><td style='color:#00d68f'>80%</td><td style='color:#00d68f'>+22.20 R</td></tr></tbody>
+            </table>
+            
+
+  <h2>Run Details</h2>
+  <table>
+    <tbody>
+      <tr><td>Symbol</td><td>XAUUSD</td></tr>
+      <tr><td>Timeframe</td><td>H1</td></tr>
+      <tr><td>Period</td><td>2024-01-01 → 2024-06-30</td></tr>
+      <tr><td>Bars Scanned</td><td>390</td></tr>
+      <tr><td>Signals Generated</td><td>80</td></tr>
+      <tr><td>Trades Resolved</td><td>50</td></tr>
+      <tr><td>Expired (unresolved)</td><td>0</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    Generated by AntiGravity Gold Trading Bot · 2026-04-08 21:47 UTC
+  </div>
+</body>
+</html>
