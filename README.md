@@ -18,7 +18,7 @@
 4. [Requirements](#requirements)
 5. [Installation](#installation)
 6. [MetaTrader 5 Setup](#metatrader-5-setup)
-7. [Telegram Bot Setup](#telegram-bot-setup)
+7. [Discord Webhook Setup](#discord-webhook-setup)
 8. [Environment Variables](#environment-variables)
 9. [Running the Bot](#running-the-bot)
 10. [Backtesting](#backtesting)
@@ -80,7 +80,7 @@ MT5 Data  ──  H4 (Trend) + H1 (Regime) + M15 (SMC Scan)
               └────────┬────────┘
                        │
                        ▼
-              📲  Telegram Channel / Group
+               📲  Discord Webhook
 ```
 
 ---
@@ -119,7 +119,7 @@ gold_trading_bot/
 │   └── signal_generator.py        # TradeIdea → TradingSignal pipeline
 │
 ├── notifications/
-│   └── telegram_bot.py            # Async Telegram dispatcher (PTB v20+)
+│   └── discord_notifier.py        # Discord webhook dispatcher
 │
 ├── backtesting/
 │   └── backtest_engine.py         # Bar-by-bar simulation engine
@@ -144,7 +144,7 @@ gold_trading_bot/
 | numpy | 1.26.0 | Numerical ops |
 | pandas-ta | 0.3.14b | ATR, ADX, EMA |
 | scipy | 1.13.0 | Linear regression slope |
-| python-telegram-bot | 20.7 | Async Telegram API |
+
 | APScheduler | 3.10.4 | Scheduled jobs |
 | python-dotenv | 1.0.0 | `.env` loading |
 | scikit-learn | 1.4.0 | Future ML scoring |
@@ -200,7 +200,6 @@ Fill in your credentials (see [Environment Variables](#environment-variables) be
 ```bash
 # Run all synthetic unit tests (no MT5 or Telegram required)
 python -m signals.signal_generator_test
-python -m notifications.telegram_bot_test
 python -m backtesting.backtest_test
 ```
 
@@ -249,62 +248,31 @@ MT5_PATH=C:\Program Files\MetaTrader 5\terminal64.exe
 
 ---
 
-## Telegram Bot Setup
+## Discord Webhook Setup
 
-### 1. Create a bot via BotFather
+### 1. Open Discord
 
-1. Open Telegram and search for **@BotFather**
-2. Send `/newbot`
-3. Choose a name (e.g. `AntiGravity Gold Bot`)
-4. Choose a username ending in `bot` (e.g. `AntiGravityGold_bot`)
-5. BotFather replies with your **HTTP API token** — save it
+Open the Discord app or web browser and navigate to your server.
 
-### 2. Create a channel or group
+### 2. Go to Server Settings
 
-| Option | Best For |
-|---|---|
-| **Private Channel** | Clean feed, no replies, easy to share |
-| **Group** | Community signals, discussion |
-| **Direct Message** | Solo trader, personal use |
+Click on your server name in the top left corner and select **Server Settings**.
 
-For a **private channel**:
-1. Create the channel in Telegram
-2. Add your bot as an **Administrator** with "Post Messages" permission
+### 3. Integrations → Webhooks
 
-### 3. Get the Chat ID
+Navigate to the **Integrations** tab on the left menu, then click on **Webhooks**.
 
-**Method A — via @userinfobot:**
+### 4. Create webhook
 
-Add [@userinfobot](https://t.me/userinfobot) to your channel temporarily, forward any message to it, and it will reply with the chat ID (a negative number like `-1001234567890`).
+Click the **New Webhook** button. Give it a name and select the channel where you want the bot to send signals.
 
-**Method B — via API:**
+### 5. Copy URL
 
-```bash
-curl "https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates"
-```
+Click **Copy Webhook URL** for the webhook you just created.
 
-Look for `"chat":{"id":...}` in the JSON response.
+### 6. Paste in settings.py
 
-### 4. Configure `.env`
-
-```env
-TELEGRAM_BOT_TOKEN=1234567890:ABCdefGHIjklMNOpqrSTUvwxYZ
-TELEGRAM_CHAT_ID=-1001234567890        # Channel or group ID (negative)
-TELEGRAM_ADMIN_CHAT_ID=987654321       # Optional: your personal ID for error alerts
-```
-
-### 5. Send a test message
-
-```bash
-python -c "
-import asyncio
-from config.settings import Settings
-from notifications.telegram_bot import TelegramNotifier
-cfg = Settings()
-notifier = TelegramNotifier(cfg)
-asyncio.run(notifier.send_text('✅ AntiGravity Bot connection test'))
-"
-```
+Paste the URL into your `.env` file under the key `DISCORD_WEBHOOK_URL` (which is loaded in settings.py).
 
 ---
 
@@ -312,15 +280,11 @@ asyncio.run(notifier.send_text('✅ AntiGravity Bot connection test'))
 
 All configuration lives in `.env`. Copy `.env.example` and fill in your values.
 
-### Telegram
+### Discord
 
 | Variable | Default | Description |
 |---|---|---|
-| `TELEGRAM_BOT_TOKEN` | *(required)* | Bot API token from @BotFather |
-| `TELEGRAM_CHAT_ID` | *(required)* | Signal channel / group ID |
-| `TELEGRAM_ADMIN_CHAT_ID` | `""` | Optional DM for error alerts |
-| `TELEGRAM_TIMEOUT_SECONDS` | `20` | API timeout per send attempt |
-| `TELEGRAM_MAX_RETRIES` | `3` | Retry attempts on network failure |
+| `DISCORD_WEBHOOK_URL` | *(required)* | Paste your Discord Webhook URL here |
 
 ### MetaTrader 5
 
@@ -408,13 +372,13 @@ All configuration lives in `.env`. Copy `.env.example` and fill in your values.
 
 ## Running the Bot
 
-### Live mode (real MT5 + real Telegram)
+### Live mode (real MT5 + Discord)
 
 ```bash
 python main.py
 ```
 
-### Dry-run (real MT5 data, no Telegram dispatch)
+### Dry-run (real MT5 data, no Discord dispatch)
 
 Messages are printed to the console instead of being sent. Useful for validating signal quality before going live.
 
@@ -576,8 +540,7 @@ Go to [railway.app](https://railway.app) → **New Project** → **Deploy from G
 In your Railway project → **Variables** tab, add all variables from `.env.example`:
 
 ```
-TELEGRAM_BOT_TOKEN   = 1234567890:ABC...
-TELEGRAM_CHAT_ID     = -1001234567890
+DISCORD_WEBHOOK_URL  = https://discord.com/api/webhooks/...
 SYMBOL               = XAUUSD
 LOG_LEVEL            = INFO
 # Leave MT5 variables blank — use --no-mt5 flag
@@ -637,8 +600,7 @@ Select the repo and branch to deploy from.
 In the **Environment** tab, add all your secrets:
 
 ```
-TELEGRAM_BOT_TOKEN   = 1234567890:ABC...
-TELEGRAM_CHAT_ID     = -1001234567890
+DISCORD_WEBHOOK_URL  = https://discord.com/api/webhooks/...
 CONFIDENCE_THRESHOLD = 0.68
 MIN_RR_RATIO         = 2.0
 LOG_LEVEL            = INFO

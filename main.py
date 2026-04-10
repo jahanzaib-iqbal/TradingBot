@@ -77,7 +77,7 @@ from data.mt5_data import MT5DataProvider, MT5Error
 from filters.news_filter import NewsFilter
 from filters.session_filter import SessionFilter
 from filters.volatility_filter import VolatilityFilter
-from notifications.telegram_bot import TelegramNotifier
+from notifications.discord_notifier import send_trade_signal, send_bot_started, send_bot_stopped
 from signals.signal_generator import SignalGenerator, TradingSignal
 from utils.logger import get_logger
 
@@ -270,7 +270,7 @@ class TradingBot:
             news_filter       = self.news_f,
         )
 
-        self.notifier = TelegramNotifier(cfg, dry_run=dry_run)
+
 
         # ── State ─────────────────────────────────────────────────────────────
         self._active_signal: Optional[ActiveSignalState] = None
@@ -336,16 +336,12 @@ class TradingBot:
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         self._stats.reset(today)
 
-        # Announce on Telegram
-        await self.notifier.send_bot_started()
+        # Announce on Discord
+        send_bot_started(symbol=self.cfg.SYMBOL, version=BOT_VERSION)
 
     async def _shutdown(self) -> None:
         """Cleanup connections and send daily summary."""
-        logger.info("Shutting down — sending daily summary …")
-        try:
-            await self.notifier.send_daily_summary(self._stats.to_summary_dict())
-        except Exception as exc:
-            logger.warning(f"Failed to send daily summary: {exc}")
+        logger.info("Shutting down …")
 
         if not self.no_mt5:
             try:
@@ -354,7 +350,7 @@ class TradingBot:
             except Exception as exc:
                 logger.warning(f"MT5 disconnect error: {exc}")
 
-        await self.notifier.send_bot_stopped(reason="Normal shutdown")
+        send_bot_stopped(reason="Normal shutdown")
         logger.info("Bot stopped.")
 
     # =========================================================================
@@ -538,8 +534,8 @@ class TradingBot:
         logger.info(f"  {signal}")
         logger.info(f"")
 
-        # Send to Telegram
-        success = await self.notifier.send_signal(signal)
+        # Send to Discord
+        success = send_trade_signal(signal.to_dict())
 
         if success:
             # Lock in the active-signal guard
@@ -553,8 +549,7 @@ class TradingBot:
                 f"{expiry_time.strftime('%H:%M UTC')} "
                 f"({_SIGNAL_EXPIRY_BARS} bars)"
             )
-        else:
-            logger.error("  Telegram send failed — signal NOT locked as active")
+            logger.error("  Discord send failed — signal NOT locked as active")
 
     # =========================================================================
     # DATA FETCHING
@@ -671,18 +666,14 @@ class TradingBot:
         """Send the daily summary and reset counters at UTC midnight."""
         summary = self._stats.to_summary_dict()
         summary["date"] = date_str   # use the *old* date for the summary
-        await self.notifier.send_daily_summary(summary)
         self._stats.reset(datetime.now(timezone.utc).strftime("%Y-%m-%d"))
         # Clear expired active signal on new day
         self._active_signal = None
         logger.info("Daily stats reset for new UTC day")
 
     async def _send_error_alert(self, error_type: str, detail: str) -> None:
-        """Send error alert to admin chat (non-blocking; ignore failures)."""
-        try:
-            await self.notifier.send_error_alert(error_type, detail)
-        except Exception:
-            pass   # never let notification errors crash the bot
+        """Error alerts not routed to discord."""
+        pass
 
     def stop(self) -> None:
         """Signal the loop to exit cleanly on the next iteration."""

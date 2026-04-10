@@ -39,10 +39,6 @@ requests>=2.31.0
 aiohttp>=3.9.0
 
 
-# ── Telegram Notification ─────────────────────────────────────────────────────
-# python-telegram-bot v20+ uses a fully async API (asyncio-native).
-# PTB extras[job-queue] includes APScheduler integration for scheduled messages.
-python-telegram-bot[job-queue]>=20.7
 
 
 # ── Job Scheduling ────────────────────────────────────────────────────────────

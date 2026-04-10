@@ -78,30 +78,8 @@ class Settings:
     Settings() directly in every module.
     """
 
-    # =========================================================================
-    # TELEGRAM
-    # =========================================================================
-
-    # The HTTP API token issued by @BotFather when you create a Telegram bot.
-    # Required — the bot cannot send any messages without this.
-    TELEGRAM_BOT_TOKEN: str = os.getenv("TELEGRAM_BOT_TOKEN", "")
-
-    # The destination chat / channel ID where signals will be published.
-    # For a private channel: a negative int like  -100123456789
-    # For a group chat:      a negative int like  -987654321
-    # For direct messages:   your personal numeric user ID
-    TELEGRAM_CHAT_ID: str = os.getenv("TELEGRAM_CHAT_ID", "")
-
-    # Optional: a second chat ID for admin / debug messages separate from the
-    # public signal channel.  Leave blank to disable.
-    TELEGRAM_ADMIN_CHAT_ID: str = os.getenv("TELEGRAM_ADMIN_CHAT_ID", "")
-
-    # Maximum time (seconds) to wait for Telegram API before treating the send
-    # as failed and triggering the retry logic.
-    TELEGRAM_TIMEOUT_SECONDS: int = _env_int("TELEGRAM_TIMEOUT_SECONDS", 20)
-
-    # Number of retry attempts for a failed Telegram message before giving up.
-    TELEGRAM_MAX_RETRIES: int = _env_int("TELEGRAM_MAX_RETRIES", 3)
+    # The Discord Webhook URL for sending signals
+    DISCORD_WEBHOOK_URL: str = os.getenv("DISCORD_WEBHOOK_URL", "")
 
     # =========================================================================
     # METATRADER 5
@@ -381,7 +359,7 @@ class Settings:
     # 900 seconds = 15 minutes (aligns with M15 bar close).
     LOOP_INTERVAL_SECONDS: int = _env_int("LOOP_INTERVAL_SECONDS", 900)
 
-    # UTC time (HH:MM) at which the daily summary message is sent to Telegram.
+    # UTC time (HH:MM) at which the daily summary is prepared.
     DAILY_SUMMARY_TIME_UTC: str = os.getenv("DAILY_SUMMARY_TIME_UTC", "21:00")
 
     # =========================================================================
@@ -515,10 +493,8 @@ class Settings:
         """
         errors: list[str] = []
 
-        if not self.TELEGRAM_BOT_TOKEN:
-            errors.append("TELEGRAM_BOT_TOKEN is not set.")
-        if not self.TELEGRAM_CHAT_ID:
-            errors.append("TELEGRAM_CHAT_ID is not set.")
+        if not self.DISCORD_WEBHOOK_URL:
+            errors.append("DISCORD_WEBHOOK_URL is not set.")
 
         if self.RISK_PER_TRADE_PCT <= 0 or self.RISK_PER_TRADE_PCT > 10:
             errors.append(

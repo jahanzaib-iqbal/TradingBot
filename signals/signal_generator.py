@@ -55,7 +55,7 @@ Raw OHLCV data
 └─────────────────────────────────────────────────────────────┘
      │
      ▼
-Telegram / Notification layer
+Discord / Notification layer
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 STRATEGY VERDICTS
@@ -262,7 +262,6 @@ class TradingSignal:
 
     All fields are populated before the signal is emitted to Telegram.
     The to_dict() method produces the machine-readable version.
-    The to_telegram_message() method produces the human-readable Telegram post.
     """
     # ── Identity ──────────────────────────────────────────────────────────────
     symbol:    str
@@ -349,106 +348,7 @@ class TradingSignal:
             "notes":             self.notes,
         }
 
-    def to_telegram_message(self) -> str:
-        """
-        Format the signal as a human-readable Telegram-style message.
 
-        Structure:
-          ════════ GOLD SIGNAL ════════
-          Direction emoji + symbol
-          Entry / SL / TP1 / TP2
-          Lot size + Risk
-          R:R + Confidence
-          Context: session, regime, trend
-          SMC evidence badges
-          Multi-strategy confluence
-          ─────────────────────────────
-          Timestamp
-        """
-        dir_emoji  = "🟢" if self.direction == "BUY" else "🔴"
-        dir_action = "BUY  ▲" if self.direction == "BUY" else "SELL ▼"
-
-        # Confidence stars
-        conf_pct = int(self.confidence * 100)
-        if conf_pct >= 80:
-            stars = "★★★★★"
-        elif conf_pct >= 70:
-            stars = "★★★★☆"
-        elif conf_pct >= 60:
-            stars = "★★★☆☆"
-        else:
-            stars = "★★☆☆☆"
-
-        # R:R display
-        rr_str = (
-            f"TP1={self.rr_ratio_tp1:.1f}R"
-            if self.rr_ratio_tp1 else "N/A"
-        )
-        if self.rr_ratio_tp2:
-            rr_str += f"  │  TP2={self.rr_ratio_tp2:.1f}R"
-
-        # TP2 line (optional)
-        tp2_line = (
-            f"🎯 TP2:         {self.take_profit_2:.2f}\n"
-            if self.take_profit_2 else ""
-        )
-
-        # SMC badges
-        badges = []
-        if self.has_ob:              badges.append("📦 Order Block")
-        if self.has_fvg:             badges.append("⚡ FVG")
-        if self.has_bos:             badges.append("🔨 BOS")
-        if self.has_choch:           badges.append("↩️ CHoCH")
-        if self.has_liquidity_sweep: badges.append("🌊 Liq Sweep")
-        badge_line = "  ".join(badges) if badges else "—"
-
-        # Confluence line
-        conf_count = self.confluence_count
-        if conf_count >= 3:
-            conf_tag = "🔥 ALL 3 strategies agree"
-        elif conf_count == 2:
-            conf_tag = "✅ 2 strategies agree"
-        elif conf_count == 1:
-            conf_tag = "⬜ SMC only"
-        else:
-            conf_tag = "—"
-
-        boost_str = (
-            f" (+{self.confluence_boost:.0%} boost)"
-            if self.confluence_boost > 0 else ""
-        )
-
-        session_upper  = self.session.upper() if self.session else "UNKNOWN"
-        regime_display = self.regime.replace("_", " ") if self.regime else "UNKNOWN"
-        trend_display  = self.trend_direction if self.trend_direction else "UNKNOWN"
-
-        msg = (
-            f"{'═'*32}\n"
-            f"{dir_emoji}  GOLD / XAUUSD  {dir_action}\n"
-            f"{'═'*32}\n"
-            f"\n"
-            f"💰 Entry:       {self.entry_price:.2f}\n"
-            f"🛑 Stop Loss:   {self.stop_loss:.2f}\n"
-            f"🎯 TP1:         {self.take_profit_1:.2f}\n"
-            f"{tp2_line}"
-            f"\n"
-            f"📊 Lot Size:    {self.lot_size:.2f}\n"
-            f"💸 Risk:        ${self.risk_amount_usd:.2f}  ({self.risk_pct:.1f}%)\n"
-            f"⚖️  R:R:         {rr_str}\n"
-            f"\n"
-            f"🔥 Confidence:  {conf_pct}%  {stars}\n"
-            f"🤝 Confluence:  {conf_tag}{boost_str}\n"
-            f"\n"
-            f"{'─'*32}\n"
-            f"📍 Session:     {session_upper}\n"
-            f"📈 Regime:      {regime_display}\n"
-            f"📉 Trend:       {trend_display}  (str={self.trend_strength:.0%})\n"
-            f"\n"
-            f"🧩 SMC:  {badge_line}\n"
-            f"{'─'*32}\n"
-            f"🕐 {self.timestamp.strftime('%Y-%m-%d %H:%M UTC')}\n"
-        )
-        return msg
 
     def __str__(self) -> str:
         return (
