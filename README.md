@@ -25,8 +25,9 @@
 11. [Deploying to Railway](#deploying-to-railway)
 12. [Deploying to Render](#deploying-to-render)
 13. [Strategy Overview](#strategy-overview)
-14. [Risk Management](#risk-management)
-15. [Disclaimer](#disclaimer)
+14. [Performance Tracking & Reports](#performance-tracking--reports)
+15. [Risk Management](#risk-management)
+16. [Disclaimer](#disclaimer)
 
 ---
 
@@ -34,7 +35,7 @@
 
 **AntiGravity** is a modular Python trading signal bot for **XAUUSD (Gold)** intraday trading.
 
-It analyses multi-timeframe price data using **Smart Money Concepts (SMC)** — Order Blocks, Fair Value Gaps, Liquidity Sweeps, and Break of Structure — then filters high-probability setups through session, volatility, and news guards before publishing **2–4 trade ideas per day** to Telegram.
+It analyses multi-timeframe price data using **Smart Money Concepts (SMC)** — Order Blocks, Fair Value Gaps, Liquidity Sweeps, and Break of Structure — then publishes **24/7 high-probability trade ideas** directly to Discord.
 
 **Key design decisions:**
 - ✅ Signal-only — no positions are ever opened
@@ -80,7 +81,12 @@ MT5 Data  ──  H4 (Trend) + H1 (Regime) + M15 (SMC Scan)
               └────────┬────────┘
                        │
                        ▼
-               📲  Discord Webhook
+               ┌────────▼────────┐
+               │  Trade Tracker  │  Async Database Storage + Live M5 Pricing
+               └────────┬────────┘
+                       │
+                       ▼
+                📲  Discord Webhook (Signals + Daily Reports)
 ```
 
 ---
@@ -666,7 +672,18 @@ nssm start AntiGravityBot
 | **Liquidity Sweep** | Stop-hunt wick below swing low / above swing high | +3% |
 | **Trend Alignment** | EMA 50/200 confirms signal direction | +10% |
 | **Market Regime** | ADX + price structure: TRENDING preferred | +5% |
-| **Session: Overlap** | London + NY simultaneous (12:00–15:59 UTC) | +10% |
+
+---
+
+## Performance Tracking & Reports
+
+**AntiGravity includes a built-in asynchronous Trade Tracker.**
+Whenever a signal is sent to Discord, it is simultaneously recorded in a persistent lightweight database (`data/trades.sqlite`). 
+
+The bot runs a non-blocking background thread that updates open trades against precise M5 price ticks. If the price wick sweeps your predetermined Stop Loss or Take Profit bounds, it correctly marks the trade as WON/LOSS and calculates your strict $ Risk-to-Reward Ratio (R).
+
+### Auto-Reporting
+At 11:59 PM Pakistan Time (`23:59 PKT`) exactly every night, the bot calculates your Daily and Lifetime Win Rates, formats them into a clean Markdown Table, and automatically dispatches the total PnL report to your Discord channel.
 
 ---
 

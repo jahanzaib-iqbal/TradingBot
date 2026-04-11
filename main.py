@@ -67,6 +67,7 @@ import argparse
 import asyncio
 import signal as _signal
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import datetime, timezone, timedelta
 from typing import Optional
@@ -77,9 +78,10 @@ from data.mt5_data import MT5DataProvider, MT5Error
 from filters.news_filter import NewsFilter
 from filters.session_filter import SessionFilter
 from filters.volatility_filter import VolatilityFilter
-from notifications.discord_notifier import send_trade_signal, send_bot_started, send_bot_stopped
+from notifications.discord_notifier import send_trade_signal, send_bot_started, send_bot_stopped, send_daily_report
 from signals.signal_generator import SignalGenerator, TradingSignal
 from utils.logger import get_logger
+from data.trade_tracker import TradeTracker
 
 logger = get_logger(__name__)
 
@@ -276,6 +278,10 @@ class TradingBot:
         self._active_signal: Optional[ActiveSignalState] = None
         self._stats         = DailyStats()
         self._start_time    = datetime.now(timezone.utc)
+        
+        self.executor       = ThreadPoolExecutor(max_workers=3)
+        self.tracker        = TradeTracker()
+        self._report_sent_today = False
 
         if reset_signal:
             logger.info("--reset-signal: active signal cleared on startup")
@@ -326,8 +332,9 @@ class TradingBot:
         logger.info(f"  No-MT5 mode:   {self.no_mt5}")
         logger.info(f"  Conf threshold:{self.cfg.CONFIDENCE_THRESHOLD:.0%}")
         logger.info(f"  Min R:R:       {self.cfg.MIN_RR_RATIO}:1")
-        logger.info(f"  Max signals/d: {self.cfg.MAX_SIGNALS_PER_DAY}")
+        logger.info(f"  Max signals/d: UNLIMITED (24/7 Mode)")
         logger.info("=" * 60)
+        print(f"  Jahanzaib Gold Bot v{BOT_VERSION}  -  Started, Best of Luck :) ")
 
         if not self.no_mt5:
             self._connect_mt5()
@@ -351,6 +358,7 @@ class TradingBot:
                 logger.warning(f"MT5 disconnect error: {exc}")
 
         send_bot_stopped(reason="Normal shutdown")
+        self.executor.shutdown(wait=False)
         logger.info("Bot stopped.")
 
     # =========================================================================
@@ -372,10 +380,20 @@ class TradingBot:
             now = datetime.now(timezone.utc)
 
             # ── Date rollover ─────────────────────────────────────────────────
+            now_pkt = now + timedelta(hours=5)
             if now.date() != last_date:
                 logger.info("Date rollover — resetting daily stats")
                 await self._on_date_rollover(str(last_date))
                 last_date = now.date()
+                
+            # Check for 23:59 PKT daily report
+            if now_pkt.hour == 23 and now_pkt.minute == 59:
+                if not self._report_sent_today:
+                    self._report_sent_today = True
+                    date_str = self.tracker.get_pkt_date_str(now)
+                    self.executor.submit(self._generate_and_send_report, date_str)
+            elif now_pkt.hour == 0:
+                self._report_sent_today = False
 
             # ── Analysis cycle ────────────────────────────────────────────────
             try:
@@ -435,6 +453,10 @@ class TradingBot:
             logger.warning("  → Skip: data fetch failed")
             self._stats.cycles_skipped += 1
             return
+            
+        # Update current open trades asynchronously non-blocking
+        if df_entry is not None and not df_entry.empty:
+            self.executor.submit(self.tracker.update_open_trades, df_entry.copy())
 
         # ─────────────────────────────────────────────────────────────────────
         # GATE 4 — Volatility check (on signal-TF bars)
@@ -448,15 +470,9 @@ class TradingBot:
             return
 
         # ─────────────────────────────────────────────────────────────────────
-        # GATE 5 — Daily cap check
+        # GATE 5 — Daily cap check (DISABLED PER USER REQUEST)
         # ─────────────────────────────────────────────────────────────────────
-        if self.signal_gen.daily_cap_reached:
-            logger.info(
-                f"  → Skip: daily signal cap reached "
-                f"({self.signal_gen.signals_today}/{self.cfg.MAX_SIGNALS_PER_DAY})"
-            )
-            self._stats.cycles_skipped += 1
-            return
+        # User requested no maximum signals limit.
 
         # ─────────────────────────────────────────────────────────────────────
         # GATE 6 — Active-signal guard
@@ -549,6 +565,11 @@ class TradingBot:
                 f"{expiry_time.strftime('%H:%M UTC')} "
                 f"({_SIGNAL_EXPIRY_BARS} bars)"
             )
+            
+            # Submit trade to tracker asynchronously AFTER discord notification
+            self.executor.submit(self.tracker.add_trade, signal.to_dict())
+            
+        else:
             logger.error("  Discord send failed — signal NOT locked as active")
 
     # =========================================================================
@@ -670,6 +691,17 @@ class TradingBot:
         # Clear expired active signal on new day
         self._active_signal = None
         logger.info("Daily stats reset for new UTC day")
+
+    def _generate_and_send_report(self, date_str: str) -> None:
+        """Run asynchronously to compile and dispatch the daily Discord report."""
+        try:
+            trades = self.tracker.get_daily_trades(date_str)
+            daily_p = self.tracker.get_daily_performance(date_str)
+            life_p = self.tracker.get_overall_performance()
+            send_daily_report(date_str, trades, daily_p, life_p)
+            logger.info(f"Daily Discord Report dispatched for PKT date: {date_str}")
+        except Exception as e:
+            logger.error(f"Failed to compile and send daily report: {e}")
 
     async def _send_error_alert(self, error_type: str, detail: str) -> None:
         """Error alerts not routed to discord."""

@@ -603,15 +603,6 @@ class SignalGenerator:
             )
 
             if isinstance(result, TradingSignal):
-                if len(self._signals_today) >= self.cfg.MAX_SIGNALS_PER_DAY:
-                    rejected.append(RejectedIdea(
-                        idea   = idea,
-                        reason = f"Daily cap ({self.cfg.MAX_SIGNALS_PER_DAY})",
-                        stage  = "daily_cap",
-                    ))
-                    _dbg_log.signal_daily_cap(self.cfg.MAX_SIGNALS_PER_DAY, result)
-                    continue
-
                 signals.append(result)
                 self._signals_today.append(result)
                 _dbg_log.signal_approved(result)

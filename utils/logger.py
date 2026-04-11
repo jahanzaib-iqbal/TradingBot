@@ -47,7 +47,6 @@ from __future__ import annotations
 import logging
 import sys
 from datetime import datetime
-from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 from typing import Any, Optional
 
@@ -69,7 +68,7 @@ _CONFIGURED_LOGGERS: set[str] = set()
 def get_logger(
     name:     str,
     log_file: str = "logs/gold_bot.log",
-    level:    str = "INFO",
+    level:    str = "WARNING",
 ) -> logging.Logger:
     """
     Return a configured INFO-level logger.
@@ -97,19 +96,7 @@ def get_logger(
     ch.setFormatter(logging.Formatter(LOG_FORMAT, DATE_FORMAT))
     logger.addHandler(ch)
 
-    # Rotating file handler
-    log_path = Path(log_file)
-    log_path.parent.mkdir(parents=True, exist_ok=True)
-    fh = TimedRotatingFileHandler(
-        filename   = log_path,
-        when       = "midnight",
-        interval   = 1,
-        backupCount= 30,
-        encoding   = "utf-8",
-        delay      = True,          # only open file on first write
-    )
-    fh.setFormatter(logging.Formatter(LOG_FORMAT, DATE_FORMAT))
-    logger.addHandler(fh)
+    # File logging has been disabled by user request.
 
     return logger
 
@@ -137,20 +124,9 @@ def get_debug_logger(
     _CONFIGURED_LOGGERS.add(name)
     logger.setLevel(logging.DEBUG)
 
-    # Debug file handler — daily rotation, keep 14 days
-    debug_path = Path(debug_file)
-    debug_path.parent.mkdir(parents=True, exist_ok=True)
-    fh = TimedRotatingFileHandler(
-        filename    = debug_path,
-        when        = "midnight",
-        interval    = 1,
-        backupCount = 14,
-        encoding    = "utf-8",
-        delay       = True,
-    )
-    fh.setLevel(logging.DEBUG)
-    fh.setFormatter(logging.Formatter(DEBUG_FORMAT, DATE_FORMAT))
-    logger.addHandler(fh)
+    # File logging has been disabled by user request.
+    # We use NullHandler so all debug events are completely ignored and discarded.
+    logger.addHandler(logging.NullHandler())
 
     return logger
 

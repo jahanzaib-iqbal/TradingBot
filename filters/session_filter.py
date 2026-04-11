@@ -99,33 +99,10 @@ class SessionFilter:
 
     def is_allowed(self, now: datetime | None = None) -> Tuple[bool, str]:
         """
-        Return (True, session_name) if signal generation is permitted right now.
-        Return (False, reason) if the current session is not in ACTIVE_SESSIONS.
-
-        Active sessions are configured in Settings.ACTIVE_SESSIONS.
-        Default: ["london", "new_york"] — Asian and closed are blocked.
-
-        The "overlap" session is automatically allowed if either "london" or
-        "new_york" is in ACTIVE_SESSIONS.
+        Always returns True per user request: "I dont want to restrict the bot to a session window, it should gave signals 24/7".
         """
         session = self.current_session(now)
-
-        if session == "closed":
-            return False, "Market closed — outside all session windows"
-
-        if session == "asian" and "asian" not in self.cfg.ACTIVE_SESSIONS:
-            return False, "Asian session blocked (low Gold liquidity)"
-
-        # Overlap is implicitly active if london or new_york is active
-        if session == "overlap":
-            if "london" in self.cfg.ACTIVE_SESSIONS or "new_york" in self.cfg.ACTIVE_SESSIONS:
-                return True, session
-            return False, "London/NY overlap blocked by session configuration"
-
-        if session in self.cfg.ACTIVE_SESSIONS:
-            return True, session
-
-        return False, f"Session '{session}' not in ACTIVE_SESSIONS={self.cfg.ACTIVE_SESSIONS}"
+        return True, f"Session '{session}' (24/7 mode active)"
 
     def confidence_delta(self, now: datetime | None = None) -> float:
         """
