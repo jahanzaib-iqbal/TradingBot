@@ -1,7 +1,7 @@
 """
 signals/signal_generator.py
 ==============================
-Multi-strategy decision engine for the AntiGravity Gold Bot.
+Multi-strategy decision engine for the JayBot Gold Bot.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 PIPELINE OVERVIEW  (updated — multi-strategy)
@@ -388,7 +388,7 @@ _CONFLUENCE_BOOST: dict[int, float] = {
 
 class SignalGenerator:
     """
-    Multi-strategy orchestrator for the AntiGravity Gold Bot.
+    Multi-strategy orchestrator for the JayBot Gold Bot.
 
     Runs three independent strategy engines, combines their verdicts via a
     confluence vote, then validates each passing idea through a strict

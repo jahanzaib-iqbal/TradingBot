@@ -33,7 +33,7 @@
 
 ## Overview
 
-**AntiGravity** is a modular Python trading signal bot for **XAUUSD (Gold)** intraday trading.
+**JayBot** is a modular Python trading signal bot for **XAUUSD (Gold)** intraday trading.
 
 It analyses multi-timeframe price data using **Smart Money Concepts (SMC)** — Order Blocks, Fair Value Gaps, Liquidity Sweeps, and Break of Structure — then publishes **24/7 high-probability trade ideas** directly to Discord.
 
@@ -164,8 +164,7 @@ gold_trading_bot/
 ### Step 1 — Clone the repository
 
 ```bash
-git clone https://github.com/your-username/AntiGravity_TradingBot.git
-cd AntiGravity_TradingBot/gold_trading_bot
+git clone https://github.com/your-username/TradingBot.git
 ```
 
 ### Step 2 — Create a virtual environment
@@ -533,7 +532,7 @@ ATR_MIN_POINTS=3.0           # Include quieter periods
 git init
 git add .
 git commit -m "Initial commit"
-git remote add origin https://github.com/your-username/AntiGravity_TradingBot.git
+git remote add origin https://github.com/your-username/TradingBot.git
 git push -u origin main
 ```
 
@@ -595,7 +594,7 @@ Select the repo and branch to deploy from.
 
 | Setting | Value |
 |---|---|
-| **Name** | `antigravity-gold-bot` |
+| **Name** | `JayBot` |
 | **Environment** | `Python` |
 | **Build Command** | `pip install -r gold_trading_bot/requirements.txt` |
 | **Start Command** | `python gold_trading_bot/main.py --no-mt5 --interval 60` |
@@ -647,7 +646,6 @@ On the Windows VPS:
 # 2. Install MetaTrader 5 and log in
 # 3. Clone and install the bot
 git clone <repo-url>
-cd AntiGravity_TradingBot\gold_trading_bot
 pip install -r requirements.txt
 
 # 4. Create .env with MT5 + Telegram credentials
@@ -655,8 +653,8 @@ pip install -r requirements.txt
 python main.py
 
 # 6. To keep running after disconnect — use Task Scheduler or NSSM:
-nssm install AntiGravityBot "python" "C:\path\to\gold_trading_bot\main.py"
-nssm start AntiGravityBot
+nssm install JayBot "python" "C:\path\to\gold_trading_bot\main.py"
+nssm start JayBot
 ```
 
 ---
@@ -677,7 +675,7 @@ nssm start AntiGravityBot
 
 ## Performance Tracking & Reports
 
-**AntiGravity includes a built-in asynchronous Trade Tracker.**
+**JayBot includes a built-in asynchronous Trade Tracker.**
 Whenever a signal is sent to Discord, it is simultaneously recorded in a persistent lightweight database (`data/trades.sqlite`). 
 
 The bot runs a non-blocking background thread that updates open trades against precise M5 price ticks. If the price wick sweeps your predetermined Stop Loss or Take Profit bounds, it correctly marks the trade as WON/LOSS and calculates your strict $ Risk-to-Reward Ratio (R).

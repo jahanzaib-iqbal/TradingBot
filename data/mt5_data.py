@@ -1,7 +1,7 @@
 """
 data/mt5_data.py
 ================
-MetaTrader 5 data provider for the AntiGravity Gold Trading Bot.
+MetaTrader 5 data provider for the JayBot Gold Trading Bot.
 
 Public API
 ----------

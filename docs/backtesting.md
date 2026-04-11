@@ -113,4 +113,4 @@ Key parameters to stress-test:
 
 ---
 
-*Last updated: April 2026 | AntiGravity Trading Bot v1.0*
+*Last updated: April 2026 | JayBot Trading Bot v1.0*

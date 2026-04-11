@@ -1,7 +1,7 @@
 """
 utils/logger.py
 ---------------
-Centralised logging configuration for the AntiGravity Gold Trading Bot.
+Centralised logging configuration for the JayBot Gold Trading Bot.
 
 Responsibilities
 ────────────────

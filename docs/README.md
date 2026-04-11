@@ -1,6 +1,6 @@
 # docs/
 
-This folder contains the technical documentation for the AntiGravity Gold Trading Bot.
+This folder contains the technical documentation for the JayBot Gold Trading Bot.
 
 ## Documents
 

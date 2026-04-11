@@ -322,7 +322,7 @@ class TradingBot:
     async def _startup(self) -> None:
         """Initialise connections and announce bot start."""
         logger.info("=" * 60)
-        logger.info(f"  AntiGravity Gold Bot v{BOT_VERSION}  —  starting up")
+        logger.info(f"  JayBot Gold Bot v{BOT_VERSION}  —  starting up")
         logger.info("=" * 60)
         logger.info(f"  Symbol:        {self.cfg.SYMBOL}")
         logger.info(f"  Timeframes:    {self.cfg.TREND_TIMEFRAME} / "

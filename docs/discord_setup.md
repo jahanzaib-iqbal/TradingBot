@@ -10,7 +10,7 @@ How to configure the Discord Webhook that delivers trading signals and the daily
 2. Go to **Server Settings** (click your server name in the top left).
 3. Select **Integrations** in the left menu.
 4. Click on **Webhooks** and then click **New Webhook**.
-5. Name the webhook (e.g., `AntiGravity Gold Bot`).
+5. Name the webhook (e.g., `JayBot Gold Bot`).
 6. Select the specific Discord **Channel** where you want the messages dropped.
 7. Click **Copy Webhook URL** and save your changes.
 
@@ -57,7 +57,7 @@ The format looks exactly like this:
 
 ## The Dynamic Trade Tracker
 
-AntiGravity features a persistent background database (`trade_history.sqlite`) that evaluates the actual M5 charts against the Stop Loss and Take Profit levels of every signal sent. 
+JayBot features a persistent background database (`trade_history.sqlite`) that evaluates the actual M5 charts against the Stop Loss and Take Profit levels of every signal sent. 
 
 Because the tracking system relies on background **Threading** (`ThreadPoolExecutor`), it never delays the instantaneous transmission of the signal logic to the Discord Webhook.
 
@@ -101,4 +101,4 @@ Total R: +12.4R
 *   Discord Webhooks only transmit outwards (1-way). The bot does not respond to typed text commands.
 *   If the bot's MT5 connection drops, it will repeatedly auto-reconnect and dispatch a startup success confirmation embed to Discord automatically.
 
-*Last updated: April 2026 | AntiGravity Trading Bot v1.0*
+*Last updated: April 2026 | JayBot Trading Bot v1.0*

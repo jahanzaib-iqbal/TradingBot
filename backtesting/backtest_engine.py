@@ -1,7 +1,7 @@
 """
 backtesting/backtest_engine.py
 ================================
-Event-driven bar-by-bar backtesting engine for the AntiGravity Gold Bot.
+Event-driven bar-by-bar backtesting engine for the JayBot Gold Bot.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 PHILOSOPHY

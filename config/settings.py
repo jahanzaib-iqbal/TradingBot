@@ -1,7 +1,7 @@
 """
 config/settings.py
 ==================
-Central configuration hub for the AntiGravity Gold Trading Bot.
+Central configuration hub for the JayBot Gold Trading Bot.
 
 All parameters are loaded from environment variables (via a .env file) so the
 bot can be reconfigured without touching source code.  Every parameter has a

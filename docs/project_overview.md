@@ -1,4 +1,4 @@
-# AntiGravity Gold Trading Bot — Project Overview
+# JayBot Gold Trading Bot — Project Overview
 
 > A modular, signal-only Python bot for XAUUSD (Gold) intraday trading.
 > Signals are published to Telegram. No automated trade execution.
@@ -227,4 +227,4 @@ The daily state is written to `data/risk_state.json` so a bot restart mid-day do
 
 ---
 
-*Last updated: April 2026 | AntiGravity Trading Bot v1.0*
+*Last updated: April 2026 | JayBot Trading Bot v1.0*
