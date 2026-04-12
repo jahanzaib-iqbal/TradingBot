@@ -1,7 +1,7 @@
 """
 notifications/telegram_bot.py
 ================================
-Telegram notification dispatcher for the AntiGravity Gold Trading Bot.
+Telegram notification dispatcher for the JayBot Gold Trading Bot.
 
 Sends three categories of messages:
   1. Trade signals        — formatted alert for every approved TradingSignal
@@ -188,7 +188,7 @@ class MessageBuilder:
     def bot_started(symbol: str = "XAUUSD", version: str = "1.0") -> str:
         ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
         return (
-            f"✅ *AntiGravity Bot Started*\n"
+            f"✅ *JayBot Bot Started*\n"
             f"{'─' * 28}\n"
             f"Symbol:   {symbol}\n"
             f"Version:  {version}\n"
@@ -204,7 +204,7 @@ class MessageBuilder:
     def bot_stopped(reason: str = "Manual shutdown") -> str:
         ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
         return (
-            f"🛑 *AntiGravity Bot Stopped*\n"
+            f"🛑 *JayBot Bot Stopped*\n"
             f"{'─' * 28}\n"
             f"Reason: {reason}\n"
             f"Time:   {ts}"

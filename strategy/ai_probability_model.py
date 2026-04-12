@@ -1,7 +1,7 @@
 """
 strategy/ai_probability_model.py
 ==================================
-AI-powered trade win-probability predictor for the AntiGravity Gold Bot.
+AI-powered trade win-probability predictor for the JayBot Gold Bot.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 GOAL

@@ -1,4 +1,4 @@
-# AntiGravity — Gold Trading Signal Bot
+# My Gold Trading Signal Bot
 
 > **Signal-only.** No automated execution. All signals published to Telegram.
 
@@ -6,7 +6,7 @@
 
 ## What is this?
 
-**AntiGravity** is a modular Python bot that analyses the XAUUSD (Gold) market and publishes
+**JayBot** is a modular Python bot that analyses the XAUUSD (Gold) market and publishes
 intraday trade signals to a Telegram channel. It is designed for traders who want
 data-driven, algorithmically filtered entry ideas while keeping full manual control
 over trade execution.
@@ -43,7 +43,6 @@ methodology — Order Blocks, Fair Value Gaps, Break of Structure, and liquidity
 ```bash
 # 1. Clone the repository
 git clone <your-repo-url>
-cd AntiGravity_TradingBot/gold_trading_bot
 
 # 2. Create a virtual environment
 python -m venv .venv

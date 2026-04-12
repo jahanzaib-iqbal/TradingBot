@@ -39,14 +39,9 @@ class RiskManager:
     def is_trading_allowed(self) -> bool:
         """
         Master gate — returns True only if ALL risk conditions are satisfied.
-
-        Checks: daily signal count, daily loss limit, reset if new day.
+        (Note: Max Signals and Max Loss completely disabled as per user request).
         """
         self._reset_if_new_day()
-        if self._state["signals_today"] >= self.cfg.MAX_SIGNALS_PER_DAY:
-            return False
-        if self._state["daily_loss_pct"] >= self.cfg.MAX_DAILY_LOSS_PCT:
-            return False
         return True
 
     def register_signal_sent(self) -> None:

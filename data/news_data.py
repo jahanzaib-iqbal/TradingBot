@@ -1,7 +1,7 @@
 """
 data/news_data.py
 ==================
-Economic news intelligence layer for the AntiGravity Gold Trading Bot.
+Economic news intelligence layer for the JayBot Gold Trading Bot.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 GOAL

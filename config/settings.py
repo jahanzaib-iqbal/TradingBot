@@ -1,7 +1,7 @@
 """
 config/settings.py
 ==================
-Central configuration hub for the AntiGravity Gold Trading Bot.
+Central configuration hub for the JayBot Gold Trading Bot.
 
 All parameters are loaded from environment variables (via a .env file) so the
 bot can be reconfigured without touching source code.  Every parameter has a
@@ -150,19 +150,13 @@ class Settings:
     # Recommended range: 0.5 – 2.0 for conservative intraday trading.
     RISK_PER_TRADE_PCT: float = _env_float("RISK_PER_TRADE_PCT", 1.0)
 
-    # Maximum cumulative loss for the day expressed as a percentage of account.
-    # The bot stops generating signals once this threshold is breached.
-    # Example: 3.0 → stop trading after losing 3% in a single day.
-    MAX_DAILY_LOSS_PCT: float = _env_float("MAX_DAILY_LOSS_PCT", 3.0)
-
-    # Hard cap on the number of signals published in a single trading day.
-    # Prevents over-trading; target is 2–4 high-quality signals per day.
-    MAX_SIGNALS_PER_DAY: int = _env_int("MAX_SIGNALS_PER_DAY", 4)
+    # Disabled: MAX_DAILY_LOSS_PCT
+    # Disabled: MAX_SIGNALS_PER_DAY
 
     # Minimum acceptable reward-to-risk ratio for a signal to be published.
     # Signals with R:R below this value are discarded.
     # Example: 2.0 → only take trades where potential gain ≥ 2× potential loss.
-    MIN_RR_RATIO: float = _env_float("MIN_RR_RATIO", 2.0)
+    MIN_RR_RATIO: float = _env_float("MIN_RR_RATIO", 1.2)
 
     # Maximum lot size the bot will ever suggest (safety ceiling).
     MAX_LOT_SIZE: float = _env_float("MAX_LOT_SIZE", 5.0)
@@ -338,17 +332,17 @@ class Settings:
 
     # Minimum body-to-range ratio for a candle to qualify as a valid Order Block.
     # body_ratio = candle_body / (high − low)
-    OB_MIN_BODY_RATIO: float = _env_float("OB_MIN_BODY_RATIO", 0.5)
+    OB_MIN_BODY_RATIO: float = _env_float("OB_MIN_BODY_RATIO", 0.3)
 
     # Maximum number of bars to look back when searching for Order Blocks.
-    OB_LOOKBACK_BARS: int = _env_int("OB_LOOKBACK_BARS", 50)
+    OB_LOOKBACK_BARS: int = _env_int("OB_LOOKBACK_BARS", 300)
 
     # Minimum size of a Fair Value Gap expressed as a fraction of ATR.
     # fvg_size_points ≥ FVG_MIN_ATR_FRACTION × ATR
-    FVG_MIN_ATR_FRACTION: float = _env_float("FVG_MIN_ATR_FRACTION", 0.3)
+    FVG_MIN_ATR_FRACTION: float = _env_float("FVG_MIN_ATR_FRACTION", 0.2)
 
     # Maximum number of bars to look back when searching for Fair Value Gaps.
-    FVG_LOOKBACK_BARS: int = _env_int("FVG_LOOKBACK_BARS", 30)
+    FVG_LOOKBACK_BARS: int = _env_int("FVG_LOOKBACK_BARS", 300)
 
     # =========================================================================
     # SCHEDULING

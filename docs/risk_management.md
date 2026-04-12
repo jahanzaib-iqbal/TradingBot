@@ -1,6 +1,6 @@
 # Risk Management Documentation
 
-How the AntiGravity Gold Bot manages and limits financial risk.
+How the JayBot Gold Bot manages and limits financial risk.
 
 ---
 
@@ -136,4 +136,4 @@ Signals that don't meet this threshold are **silently discarded** before hitting
 
 ---
 
-*Last updated: April 2026 | AntiGravity Trading Bot v1.0*
+*Last updated: April 2026 | JayBot Trading Bot v1.0*

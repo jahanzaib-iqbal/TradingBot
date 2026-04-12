@@ -1,6 +1,6 @@
 # Strategy Documentation — Smart Money Concepts (SMC)
 
-A technical deep-dive into the trading methodology implemented in the AntiGravity Gold Bot.
+A technical deep-dive into the trading methodology implemented in the JayBot Gold Bot.
 
 ---
 
@@ -217,4 +217,4 @@ After all factors are calculated, the final `TradingSignal` carries:
 
 ---
 
-*Last updated: April 2026 | AntiGravity Trading Bot v1.0*
+*Last updated: April 2026 | JayBot Trading Bot v1.0*

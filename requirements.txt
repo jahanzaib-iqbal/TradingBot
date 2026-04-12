@@ -1,5 +1,5 @@
 # =============================================================================
-# AntiGravity Gold Trading Bot — Python Dependencies
+# JayBot Gold Trading Bot — Python Dependencies
 # =============================================================================
 # Minimum Python version: 3.11
 # Install with: pip install -r requirements.txt

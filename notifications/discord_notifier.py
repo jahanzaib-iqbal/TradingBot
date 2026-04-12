@@ -125,3 +125,81 @@ def send_bot_stopped(reason: str) -> bool:
         return True
     except requests.RequestException:
         return False
+
+def send_daily_report(date_str: str, trades: list[dict], daily_perf: dict, lifetime_perf: dict) -> bool:
+    """Send formatted daily trading report to Discord"""
+    settings = get_settings()
+    webhook_url = settings.DISCORD_WEBHOOK_URL
+    if not webhook_url:
+        return False
+
+    # Format the Trades Table
+    table_lines = ["```",
+                   "# | Dir | Entry  | Exit   | SL     | TP     | RR   ",
+                   "--|-----|--------|--------|--------|--------|------"]
+    
+    if not trades:
+        table_lines.append("No trades recorded for today.")
+    else:
+        for i, t in enumerate(trades, 1):
+            dir_ = t.get("direction", "???").ljust(4)
+            entry = f"{t.get('entry_price', 0):.1f}".ljust(6)
+            
+            exit_p = t.get("exit_price")
+            exit_str = f"{exit_p:.1f}" if exit_p else "OPEN"
+            exit_str = exit_str.ljust(6)
+            
+            sl = f"{t.get('stop_loss', 0):.1f}".ljust(6)
+            tp = f"{t.get('take_profit', 0):.1f}".ljust(6)
+            
+            rr_val = t.get("rr")
+            if rr_val is None:
+                rr_str = "PEND"
+            else:
+                rr_str = f"+{rr_val}R" if rr_val > 0 else f"{rr_val}R"
+            rr_str = rr_str.ljust(5)
+
+            table_lines.append(f"{i:<1} | {dir_}| {entry} | {exit_str} | {sl} | {tp} | {rr_str}")
+
+    table_lines.append("```")
+    trades_table = "\n".join(table_lines)
+
+    daily_tr = daily_perf.get('total_r', 0)
+    life_tr = lifetime_perf.get('total_r', 0)
+    
+    daily_c = "🟢" if daily_tr > 0 else "🔴" if daily_tr < 0 else "⚪"
+    life_c = "🟢" if life_tr > 0 else "🔴" if life_tr < 0 else "⚪"
+
+    description = f"""
+📅 **Date:** {date_str}
+
+📋 **TRADES:**
+{trades_table}
+
+📈 **DAILY PERFORMANCE:**
+• **Trades:** {daily_perf.get('total', 0)}
+• **Wins:** 🎯 {daily_perf.get('wins', 0)} 
+• **Loss:** 🛑 {daily_perf.get('losses', 0)}
+• **Win Rate:** {daily_perf.get('win_rate', 0)}%
+• **Total R:** {daily_c} {daily_tr:+.1f}R
+
+🏆 **LIFETIME PERFORMANCE:**
+• **Trades:** {lifetime_perf.get('total', 0)}
+• **Wins:** 🎯 {lifetime_perf.get('wins', 0)} 
+• **Loss:** 🛑 {lifetime_perf.get('losses', 0)}
+• **Win Rate:** {lifetime_perf.get('win_rate', 0)}%
+• **Total R:** {life_c} {life_tr:+.1f}R
+"""
+
+    embed = {
+        "title": "📊 DAILY TRADING REPORT (XAUUSD)",
+        "description": description.strip(),
+        "color": 0x3498db,  # Blue
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    }
+
+    try:
+        requests.post(webhook_url, json={"embeds": [embed]}, timeout=10)
+        return True
+    except requests.RequestException:
+        return False

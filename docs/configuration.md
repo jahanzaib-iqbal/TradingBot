@@ -197,4 +197,4 @@ Expected CSV filename format: `XAUUSD_H1.csv`, `XAUUSD_H4.csv`, `XAUUSD_M15.csv`
 
 ---
 
-*Last updated: April 2026 | AntiGravity Trading Bot v1.0*
+*Last updated: April 2026 | JayBot Trading Bot v1.0*
