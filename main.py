@@ -281,7 +281,6 @@ class TradingBot:
         
         self.executor       = ThreadPoolExecutor(max_workers=3)
         self.tracker        = TradeTracker()
-        self._report_sent_today = False
 
         if reset_signal:
             logger.info("--reset-signal: active signal cleared on startup")
@@ -370,30 +369,30 @@ class TradingBot:
         Main polling loop.  Runs forever until _running is False.
 
         On each tick:
-          1. Check if UTC date rolled over → reset daily stats + send summary
-          2. Execute one full analysis cycle
-          3. Sleep for loop_interval seconds
+          1. Check if UTC date rolled over → reset daily stats
+          2. Check if PKT date rolled over → send daily report
+          3. Execute one full analysis cycle
+          4. Sleep for loop_interval seconds
         """
         last_date = datetime.now(timezone.utc).date()
+        last_pkt_date = (datetime.now(timezone.utc) + timedelta(hours=5)).date()
 
         while self._running:
             now = datetime.now(timezone.utc)
-
-            # ── Date rollover ─────────────────────────────────────────────────
             now_pkt = now + timedelta(hours=5)
+
+            # ── Date rollover (UTC) ───────────────────────────────────────────
             if now.date() != last_date:
-                logger.info("Date rollover — resetting daily stats")
+                logger.info("UTC Date rollover — resetting daily stats")
                 await self._on_date_rollover(str(last_date))
                 last_date = now.date()
                 
-            # Check for 23:59 PKT daily report
-            if now_pkt.hour == 23 and now_pkt.minute == 59:
-                if not self._report_sent_today:
-                    self._report_sent_today = True
-                    date_str = self.tracker.get_pkt_date_str(now)
-                    self.executor.submit(self._generate_and_send_report, date_str)
-            elif now_pkt.hour == 0:
-                self._report_sent_today = False
+            # ── Date rollover (PKT) — Send Daily Report at Midnight ───────────
+            if now_pkt.date() != last_pkt_date:
+                logger.info("PKT Date rollover — compiling daily report")
+                date_str = str(last_pkt_date)
+                self.executor.submit(self._generate_and_send_report, date_str)
+                last_pkt_date = now_pkt.date()
 
             # ── Analysis cycle ────────────────────────────────────────────────
             try:
